@@ -1,15 +1,11 @@
 import React, { Component } from 'react'
-import {Button, message} from 'antd'
+import { message} from 'antd'
 import { BrowserRouter , HashRouter , Switch , Route } from "react-router-dom"
 
 import Login from "./pages/login/login.jsx";
 import Admin from "./pages/admin/admin.jsx";
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {  }
-    }
 
     handleClick = () => {
         message.success('成功啦...');
