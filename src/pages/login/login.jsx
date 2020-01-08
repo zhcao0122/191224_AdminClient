@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button } from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
+import { Redirect } from "react-router-dom";
 
 import './login.less'
 import logo from "./images/logo.png";
+import { reqLogin} from '../../api'
 
 class Login extends Component {
 
@@ -15,9 +17,20 @@ class Login extends Component {
         // const values = form.getFieldsValue()
 
         //对表单所有字段进行统一验证
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields( async (err, {username, password}) => {
           if (!err) {
-            alert(`发送登录的ajax请求,username=${values.username},password=${values.password}`)
+            const result = await reqLogin(username, password)
+            //登录成功
+            if(result.status === 0){
+              //跳转到Admin界面
+              const user = result.data
+              localStorage.setItem('user_key', JSON.stringify(user))
+              this.props.history.replace('/')
+              message.success('登录成功！')
+            }else {
+              message.error(result.msg)
+            }
+            //登录失败
           }else{
             alert('验证失败!')
           }
@@ -36,9 +49,17 @@ class Login extends Component {
         callback() //表示验证通过
       }
     }
+
     render() {
 
-      const { getFieldDecorator } = this.props.form;
+    //读取保存的user，如果不存在 直接跳转到管理界面
+    const user = JSON.parse(localStorage.getItem('user_key') || '{}')
+    if(user._id){
+       // this.props.history.replace('/login') 事件回调函数中进行路由跳转
+       return <Redirect to="/"></Redirect> //自动跳转到指定的路由路径
+    }
+
+    const { getFieldDecorator } = this.props.form;
 
         return (
             <div className="login">

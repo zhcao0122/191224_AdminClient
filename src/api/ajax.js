@@ -3,6 +3,7 @@
  */
 import axios from 'axios'
 import qs from 'qs'
+import { message } from 'antd'
 
 
 // 添加请求拦截器
@@ -16,5 +17,15 @@ axios.interceptors.request.use(function (config) {
 
     return config
   })
+
+//添加响应拦截器
+//在请求返回之后且在我们指定的请求回调函数之前
+axios.interceptors.response.use(function (response) {
+  return response.data //返回的结果就会交给我们指定的请求响应的回调函数
+}, function (error) {//统一处理所有请求的异常错误
+  message.error('请求出错'+error.message)
+  //返回一个padding状态的promise，中断promise链
+  return  new Promise(() => {})
+})
 
 export default axios
