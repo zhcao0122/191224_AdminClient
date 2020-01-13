@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button, message } from 'antd';
-import { Redirect } from "react-router-dom";
+import { Form, Icon, Input, Button, message } from 'antd'
+import { Redirect } from "react-router-dom"
 
 import './login.less'
-import logo from "./images/logo.png";
+import logo from "./images/logo.png"
 import { reqLogin} from '../../api'
+import storageUtils from '../../utils/storageUtils'
+import memoryUtils from '../../utils/memoryUtils'
 
 class Login extends Component {
 
@@ -24,7 +26,10 @@ class Login extends Component {
             if(result.status === 0){
               //跳转到Admin界面
               const user = result.data
-              localStorage.setItem('user_key', JSON.stringify(user))
+              //localStorage.setItem('user_key', JSON.stringify(user))
+              storageUtils.saveUser(user)
+              //保存到内存中
+              memoryUtils.user = user
               this.props.history.replace('/')
               message.success('登录成功！')
             }else {
@@ -53,7 +58,8 @@ class Login extends Component {
     render() {
 
     //读取保存的user，如果不存在 直接跳转到管理界面
-    const user = JSON.parse(localStorage.getItem('user_key') || '{}')
+    //const user = JSON.parse(localStorage.getItem('user_key') || '{}')
+    const user = memoryUtils.user
     if(user._id){
        // this.props.history.replace('/login') 事件回调函数中进行路由跳转
        return <Redirect to="/"></Redirect> //自动跳转到指定的路由路径
